@@ -28,10 +28,22 @@ reply = [
     '아니에요'
     ]
 
-ask = [
-    '?',
-    '어떰'
-    ]
+ask_end = [
+    '는',
+    '어떰',
+    '어때',
+    '야',
+    '나요'
+]
+
+ask = []
+
+for i in range(len(ask_end)):
+    ask += [ask_end[i]+'?']
+
+print(ask)
+
+
 
 async def autoSendMessage():
     await client.wait_until_ready()
@@ -60,8 +72,13 @@ async def on_message(message):
         for i in range(len(ask)):
             print(msg.find(ask[i]))
             if msg.find(ask[i]) >= 0 and done == False:
-                await client.send_message(client.get_channel(channel_id), Content)
-                done = True
+                Content = random.choice(reply+null)
+                print(Content)
+                try:
+                    await client.send_message(client.get_channel(channel_id), Content)
+                    done = True
+                except:
+                    done = True
                 break
         if msg.find('짭그') >= 0 and done == False:
             try:
