@@ -5,6 +5,7 @@ import datetime
 import time
 
 bot_token = ''
+zabgrassCall = '짭그'
 
 client = discord.Client()
 
@@ -13,7 +14,7 @@ day = []
 night = ['야근이 싫어요', '오늘도 밤샘이다!']
 reply = ['', '네? 왜요?', '부르지 마세요', '아니에요']
 
-async def my_background_task():
+async def autoSendMessage():
     await client.wait_until_ready()
     ContentList = work()
     while not client.is_closed:
@@ -33,7 +34,8 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.content.startswith('짭그'):
+    msg = message.content
+    if zabgrassCall in msg:
         Content = random.choice(reply)
         try:
             await client.send_message(client.get_channel(''), Content)
@@ -66,5 +68,5 @@ def work():
     return ContentList
         
 
-client.loop.create_task(my_background_task())
+client.loop.create_task(autoSendMessage())
 client.run(bot_token)
