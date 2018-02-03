@@ -3,9 +3,59 @@ import random
 import asyncio
 import datetime
 import time
+import sqlite3
+import json
 
-bot_token = ''
-channel_id = ''
+############################################################
+###                      Load Files                      ###
+############################################################
+
+#set.json
+try:
+    jdata = open('set.json').read()
+    jset = json.loads(jdata)
+except:
+    new_json = []
+
+    print('DB 이름 : ', end = '')
+    new_json += [input()]
+
+    with open("set.json", "w") as f:
+        f.write('{ "db" : "' + new_json[0] + '" }')
+    
+    jdata = open('set.json').read()
+    jset = json.loads(jdata)
+
+#token.txt
+try:
+    bot_token = open('token.txt').read()
+except:
+    print('토큰 : ', end = '')
+    token = input()
+    with open('token.txt', 'w') as f:
+        f.write(token)
+    print('등록되었습니다. 이후 token.txt 파일에서 바꿀 수 있습니다.')
+
+    bot_token = open('token.txt').read()
+
+conn = sqlite3.connect(jset['db'] + '.db')
+curs = conn.cursor()
+
+try:
+    curs.execute('select * from SEND_TARGET_TB limit 1')
+except:
+    curs.execute('create table SEND_TARGET_TB(server test, channel text);')
+    print('SEND_TARGET_TB 테이블 생성됨')
+    conn.commit()
+
+curs.execute('select * from SEND_TARGET_TB')
+channelList = curs.fetchall()
+
+verNative = open('ver.json').read()
+verJson = json.loads(verNative)
+
+#bot_token = 'NDA0OTQwMDUxODk4ODI2NzYz.DUymiQ.RjOdJnNCAjlISOdnPJXLK2ASRc0'
+#channel_id = '396884596962361344'
 zabgrassCall = '짭그'
 
 client = discord.Client()
@@ -45,10 +95,16 @@ print(ask)
 
 
 
-async def autoSendMessage():
+async def autoSendMessage(channel_id):
     await client.wait_until_ready()
     ContentList = work()
     while not client.is_closed:
+        curs.execute('select * from SEND_TARGET_TB where channel="'+channel_id+'"')
+        check = curs.fetchall()
+        try:
+            check[0][1]
+        except:
+            break
         Content = random.choice(ContentList)
         await client.send_message(client.get_channel(channel_id), Content)
         wait = waittime()
@@ -75,17 +131,43 @@ async def on_message(message):
                 Content = random.choice(reply+null)
                 print(Content)
                 try:
-                    await client.send_message(client.get_channel(channel_id), Content)
+                    await client.send_message(message.channel, Content)
                     done = True
                 except:
                     done = True
                 break
         if msg.find('짭그') >= 0 and done == False:
             try:
-                await client.send_message(client.get_channel(channel_id), Content)
+                await client.send_message(message.channel, Content)
                 done = True
             except:
                 done = True
+    if message.content.startswith('!zab'):
+        try:
+            zabCall, Channel = message.content.split()
+            Channel = Channel.replace('<', '')
+            Channel = Channel.replace('>', '')
+            Channel = Channel.replace('#', '')
+            curs.execute('delete from SEND_TARGET_TB where channel="'+Channel+'"')
+            curs.execute('insert into SEND_TARGET_TB(server, channel) values("'+message.server.id+'", "'+Channel+'")')
+            conn.commit()
+            await client.send_message(message.channel, '완료.')
+            client.loop.create_task(autoSendMessage(Channel))
+        except:
+            await client.send_message(message.channel, '잘못된 사용법: `!zab #채널`')
+    if message.content.startswith('!nozab'):
+        try:
+            zabCall, Channel = message.content.split()
+            Channel = Channel.replace('<', '')
+            Channel = Channel.replace('>', '')
+            Channel = Channel.replace('#', '')
+            curs.execute('delete from SEND_TARGET_TB where channel="'+Channel+'"')
+            conn.commit()
+            await client.send_message(message.channel, '완료.')
+        except:
+            await client.send_message(message.channel, '잘못된 사용법: `!nozab #채널`')
+    if message.content.startswith('a!help'):
+        await client.send_message(message.channel, '`!zab` 짭\n`!nozab` 안돼 짭'+'\n\n'+'\nver: '+verJson['ver'])
     
 
 def Datetime():
@@ -113,6 +195,7 @@ def work():
         #print('night')
     return ContentList
         
+for n in range(len(channelList)):
+    client.loop.create_task(autoSendMessage(channelList[n][1]))
 
-client.loop.create_task(autoSendMessage())
 client.run(bot_token)

@@ -4,7 +4,7 @@
 
 ## 기능
 
-* 
+* 쓸데없는 말을 합니다.
 
 ## 시작하기
 
@@ -17,6 +17,16 @@
 Ubuntu(Debian)
 ```
 apt-get install python3 python3-pip
+```
+
+
+이 앱이 사용하는 DB 엔진인 SQLite3는 전용 소프트웨어를 설치하여 제어할 수 있습니다.
+
+[Windows](https://www.sqlite.org/download.html)
+
+Ubuntu(Debian)
+```
+apt-get install sqlite3
 ```
 
 ### 시작하기에 앞서
@@ -57,6 +67,7 @@ python3 bot.py
 nohup python3 bot.py &
 ```
 
+* 최초 1회 실행 시 이 명령어를 입력하지 마세요.
 
 ## 사용하고 있는 외부 저작물
 
@@ -66,11 +77,12 @@ nohup python3 bot.py &
 
 * **호박고구마** - *개발 시작* - [kpjhg0124](https://github.com/kpjhg0124)
 
-[기여자 목록](https://github.com/your/pubg-clan-discordbot-python/contributors)을 확인하여 이 프로젝트에 참가하신 분들을 보실 수 있습니다.
+[기여자 목록](https://github.com/kpjhg0124/zabgrass/graphs/contributors)을 확인하여 이 프로젝트에 참가하신 분들을 보실 수 있습니다.
 
 ## 라이센스
 
-이 프로젝트는 []을 사용합니다 - [LICENSE](./LICENSE) 파일에서 자세히 알아보세요.
+이 프로젝트는 GNU 일반 공중 사용 허가서를 사용합니다 - [LICENSE](./LICENSE) 파일에서 자세히 알아보세요.
+
 
 
 ---------------------------------------
