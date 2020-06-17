@@ -110,7 +110,7 @@ const random = {
 	}
 }
 
-var bot_token = '12345678';
+var bot_token = 'NzE2NTQzNDkwNDY0NDE1ODQ0.Xul5PQ.Ml5wjSebicFZ2WSY7EZRSMZ1HaY';
 
 /*
 // token.txt
@@ -140,7 +140,7 @@ try {
 await curs.execute('select * from SEND_TARGET_TB');
 */
 channelList = [
-	'670426525182459927', '675264839094108161', '693808616096137256'
+	'670426525182459927'//, '675264839094108161', '693808616096137256'
 ];
 
 var verNative = require('./ver.json');
@@ -152,7 +152,7 @@ var nul = ['', '', '', ''];
 
 var auto = [
     '퇴근 언제하지 ㅠ', 
-    '흠'
+    '일하기 싫다'
 ];
 var day = [];
 var night = [
@@ -233,8 +233,8 @@ function range(s, e) {
 function list(x) { return x; }
 
 function waittime() {
-    hour = list(range(2, 8));
-    min_ten = list(range(1, 6));
+    hour = list(range(0, 2));
+    min_ten = list(range(0, 6));
     min_one = list(range(0, 10));
     time = random.choice(hour)*60*60 + random.choice(min_ten)*60*10 + random.choice(min_one)*60;
     return time;
@@ -253,7 +253,10 @@ function work() {
     return ContentList;
 }
 
-var ask = [];
+var ask = []; // = ask_end 안됨
+for(var li of ask_end) {
+	ask.push(li);
+}
 
 for(i of ask_end) {
     ask.push(i + '?');
@@ -265,7 +268,8 @@ async function autoSendMessage(channel_id) {
     var ContentList = work();
 	
     async function timer() {
-		print("[[" + client.channels.get(channel_id).name + " 채널에 자동으로 메시지를 보냅니다.]]");
+		var wt = waittime() * 1000;
+		print("[[" + client.channels.get(channel_id).name + " 채널에 " + wt / 1000 + "초 후 자동으로 메시지를 보냅니다.]]");
 		setTimeout(function() {
 			/*
 			curs.execute('select * from SEND_TARGET_TB where channel="'+channel_id+'"');
@@ -276,11 +280,11 @@ async function autoSendMessage(channel_id) {
 			*/
 			var Content = random.choice(ContentList);
 			client.channels.get(channel_id).send(Content);
-			wait = waittime();
-			print('다음 메시지는 ' + String(wait) + '초 후에.');
+			// wait = waittime();
+			// print('다음 메시지는 ' + String(wait) + '초 후에.');
 			
 			timer();
-		}, waittime() * 1000);
+		}, wt);
 	}
 	timer();
 }
