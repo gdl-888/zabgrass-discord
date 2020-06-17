@@ -110,7 +110,7 @@ const random = {
 	}
 }
 
-var bot_token = 'NzE2NTQzNDkwNDY0NDE1ODQ0.Xul5PQ.Ml5wjSebicFZ2WSY7EZRSMZ1HaY';
+var bot_token = '12345678';
 
 /*
 // token.txt
