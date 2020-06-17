@@ -44,7 +44,7 @@ curs = conn.cursor()
 try:
     curs.execute('select * from SEND_TARGET_TB limit 1')
 except:
-    curs.execute('create table SEND_TARGET_TB(server test, channel text);')
+    curs.execute('create table SEND_TARGET_TB(server text, channel text);')
     print('SEND_TARGET_TB 테이블 생성됨')
     conn.commit()
 
@@ -105,7 +105,7 @@ async def autoSendMessage(channel_id):
         except:
             break
         Content = random.choice(ContentList)
-        await client.send_message(client.get_channel(channel_id), Content)
+        await client.get_channel(channel_id).send(Content)
         wait = waittime()
         print('다음 메시지는 '+str(wait)+'초 후에.')
         await asyncio.sleep(wait)
@@ -130,14 +130,14 @@ async def on_message(message):
                 Content = random.choice(reply+null)
                 print(Content)
                 try:
-                    await client.send_message(message.channel, Content)
+                    await message.channel.send(Content)
                     done = True
                 except:
                     done = True
                 break
         if msg.find('짭그') >= 0 and done == False:
             try:
-                await client.send_message(message.channel, Content)
+                await message.channel.send(Content)
                 done = True
             except:
                 done = True
@@ -150,10 +150,10 @@ async def on_message(message):
             curs.execute('delete from SEND_TARGET_TB where channel="'+Channel+'"')
             curs.execute('insert into SEND_TARGET_TB(server, channel) values("'+message.server.id+'", "'+Channel+'")')
             conn.commit()
-            await client.send_message(message.channel, '완료.')
+            await message.channel.send('완료.')
             client.loop.create_task(autoSendMessage(Channel))
         except:
-            await client.send_message(message.channel, '잘못된 사용법: `!zab #채널`')
+            await message.channel.send('잘못된 사용법: `!zab #채널`')
     if message.content.startswith('!nozab'):
         try:
             zabCall, Channel = message.content.split()
@@ -162,11 +162,11 @@ async def on_message(message):
             Channel = Channel.replace('#', '')
             curs.execute('delete from SEND_TARGET_TB where channel="'+Channel+'"')
             conn.commit()
-            await client.send_message(message.channel, '완료.')
+            await message.channel.send('완료.')
         except:
-            await client.send_message(message.channel, '잘못된 사용법: `!nozab #채널`')
+            await message.channel.send('잘못된 사용법: `!nozab #채널`')
     if message.content.startswith('a!help'):
-        await client.send_message(message.channel, '`!zab` 짭\n`!nozab` 안돼 짭'+'\n\n'+'\nver: '+verJson['ver'])
+        await message.channel.send('`!zab` 짭\n`!nozab` 안돼 짭'+'\n\n'+'\nver: '+verJson['ver'])
     
 
 def Datetime():
